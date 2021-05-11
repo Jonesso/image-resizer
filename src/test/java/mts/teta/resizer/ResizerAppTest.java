@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 
 import static mts.teta.resizer.utils.MD5.getMD5;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ResizerAppTest {
 
@@ -49,7 +50,11 @@ class ResizerAppTest {
         app.setResizeWidth(reducedPreviewWidth);
         app.setResizeHeight(reducedPreviewHeight);
         app.setQuality(100);
+        long startTime = System.nanoTime();
         app.call();
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime)/1000000;
+        System.out.println("Reduce: " + duration);
 
         BufferedImage reducedPreview = ImageIO.read(new File(absolutePathOutput));
 
@@ -76,7 +81,12 @@ class ResizerAppTest {
         app.setResizeWidth(reducedPreviewWidth);
         app.setResizeHeight(reducedPreviewHeight);
         app.setQuality(100);
+        long startTime = System.nanoTime();
         app.call();
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime)/1000000;
+        System.out.println("Enlarge: " + duration);
+
 
         BufferedImage reducedPreview = ImageIO.read(new File(absolutePathOutput));
 
@@ -212,4 +222,47 @@ class ResizerAppTest {
         assertEquals("Please check params!", generatedException.getMessage());
         assertEquals(BadAttributesException.class, generatedException.getClass());
     }
+
+    //    Custom tests
+
+
+    @Test
+    public void testQuality() throws Exception {
+        URL res = getClass().getClassLoader().getResource(AUDIO_COVER_SOURCE_NAME);
+        File file = Paths.get(res.toURI()).toFile();
+        String absolutePathInput = file.getAbsolutePath();
+
+        String absolutePathOutput = absolutePathInput.replaceFirst(AUDIO_COVER_SOURCE_NAME, AUDIO_COVER_TARGET_NAME);
+
+        ResizerApp app = new ResizerApp();
+        app.setInputFile(new File(absolutePathInput));
+        app.setOutputFile(new File(absolutePathOutput));
+        app.setResizeWidth(AUDIO_COVER_WIDTH);
+        app.setResizeHeight(AUDIO_COVER_HEIGHT);
+        app.setQuality(50);
+        app.call();
+
+
+        assertTrue(true);
+    }
+
+//    @Test
+//    public void testCrop() throws Exception {
+//        URL res = getClass().getClassLoader().getResource(AUDIO_COVER_SOURCE_NAME);
+//        File file = Paths.get(res.toURI()).toFile();
+//        String absolutePathInput = file.getAbsolutePath();
+//
+//        String absolutePathOutput = absolutePathInput.replaceFirst(AUDIO_COVER_SOURCE_NAME, AUDIO_COVER_TARGET_NAME);
+//
+//        ResizerApp app = new ResizerApp();
+//        app.setInputFile(new File(absolutePathInput));
+//        app.setOutputFile(new File(absolutePathOutput));
+//        app.setBlur(3);
+//        app.setQuality(50);
+//
+//        BufferedImage reducedPreview = ImageIO.read(new File(absolutePathOutput));
+//
+//        assertEquals("Please check params!", generatedException.getMessage());
+//        assertEquals(BadAttributesException.class, generatedException.getClass());
+//    }
 }

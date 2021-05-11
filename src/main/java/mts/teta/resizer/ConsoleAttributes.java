@@ -11,20 +11,20 @@ import java.io.File;
  */
 public class ConsoleAttributes {
 
-    @Option(names = "--resize", paramLabel = "width height", split = " ", description = "resize the image")
-    protected int[] resizeParams;
+    @Option(names = "--resize", arity = "2", paramLabel = "width height", split = " ", description = "resize the image")
+    protected int[] resizeParams = {0, 0};
 
     @Option(names = "--quality", defaultValue = "100", paramLabel = "value", description = "JPEG/PNG compression level")
     protected int quality;
 
-    @Option(names = "--crop", paramLabel = "width height x y", split = " ", description = "сut out one or more rectangular regions of the image")
-    int[] cropParams;
+    @Option(names = "--crop", arity = "4", paramLabel = "width height x y", split = " ", description = "сut out one or more rectangular regions of the image")
+    protected int[] cropParams = {0, 0, 0, 0};
 
     @Option(names = "--blur", paramLabel = "{radius}", description = "reduce image noise and reduce detail levels")
-    int blur;
+    protected int blurRadius;
 
     @Option(names = "--format", paramLabel = "\"outputFormat\"", description = "the image format type")
-    protected String format;
+    protected String outputFormat;
 
     @Parameters(index = "0", paramLabel = "input-file")
     protected File inputFile;
@@ -45,12 +45,12 @@ public class ConsoleAttributes {
         return cropParams;
     }
 
-    public int getBlur() {
-        return blur;
+    public int getBlurRadius() {
+        return blurRadius;
     }
 
-    public String getFormat() {
-        return format;
+    public String getOutputFormat() {
+        return outputFormat;
     }
 
     public File getInputFile() {

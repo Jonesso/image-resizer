@@ -10,8 +10,13 @@ import java.util.concurrent.Callable;
 @CommandLine.Command(name = "resizer", mixinStandardHelpOptions = true, version = "resizer 0.0.1", description = "...")
 public class ResizerApp extends ConsoleAttributes implements Callable<Integer> {
 
-    private int resizeWidth;
-    private int resizeHeight;
+    private int resizeWidth = resizeParams[0];
+    private int resizeHeight = resizeParams[1];
+
+    private int cropWidth = cropParams[0];
+    private int cropHeight = cropParams[1];
+    private int cropX = cropParams[2];
+    private int cropY = cropParams[3];
 
     public static void main(String... args) {
         int exitCode = runConsole(args);
@@ -39,32 +44,42 @@ public class ResizerApp extends ConsoleAttributes implements Callable<Integer> {
     }
 
     public void setResizeWidth(int resizeWidth) {
-//        if (resizeParams != null) {
-//            this.resizeWidth = resizeParams[0];
-//        } else {
             this.resizeWidth = resizeWidth;
-//        }
     }
 
     public void setResizeHeight(int resizeHeight) {
-//        if (resizeParams != null) {
-//            this.resizeHeight = resizeParams[1];
-//        } else {
             this.resizeHeight = resizeHeight;
-//        }
     }
 
-    public void setFormat(String format) {
-        this.format = format;
+    public void setCropWidth(int cropWidth) {
+        this.cropWidth = cropWidth;
     }
 
-    public void setBlur(int blur) {
-        this.blur = blur;
+    public void setCropHeight(int cropHeight) {
+        this.cropHeight = cropHeight;
+    }
+
+    public void setCropX(int cropX) {
+        this.cropX = cropX;
+    }
+
+    public void setCropY(int cropY) {
+        this.cropY = cropY;
+    }
+
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat = outputFormat;
+    }
+
+    public void setBlurRadius(int blurRadius) {
+        this.blurRadius = blurRadius;
     }
 
     public void setQuality(int quality) {
         this.quality = quality;
     }
+
+
 
     public int getResizeWidth() {
         return resizeWidth;
@@ -74,4 +89,19 @@ public class ResizerApp extends ConsoleAttributes implements Callable<Integer> {
         return resizeHeight;
     }
 
+    public int getCropWidth() {
+        return cropWidth;
+    }
+
+    public int getCropHeight() {
+        return cropHeight;
+    }
+
+    public int getCropX() {
+        return cropX;
+    }
+
+    public int getCropY() {
+        return cropY;
+    }
 }
