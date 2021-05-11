@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 
 import static mts.teta.resizer.utils.MD5.getMD5;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ResizerAppTest {
 
@@ -30,6 +29,16 @@ class ResizerAppTest {
     private static final String AUDIO_COVER_TARGET_NAME = "Metallica_Kill_Em_All_1983.preview.jpeg";
     private static final Integer AUDIO_COVER_HEIGHT = 1425;
     private static final Integer AUDIO_COVER_WIDTH = 1425;
+
+    private static final String IMAGE_SOURCE_NAME = "famousFace.jpg";
+    private static final String IMAGE_TARGET_NAME = "famousFace.preview.jpeg";
+    private static final Integer IMAGE_HEIGHT = 300;
+    private static final Integer IMAGE_WIDTH = 240;
+    private static final Integer IMAGE_CROP_WIDTH = 182;
+    private static final Integer IMAGE_CROP_HEIGHT = 62;
+
+    private static final String LOGO_SOURCE_NAME = "spring-boot.jpg";
+    private static final String LOGO_TARGET_NAME = "spring-boot.preview.png";
 
     @Test
     public void testReducingCover() throws Exception {
@@ -50,11 +59,7 @@ class ResizerAppTest {
         app.setResizeWidth(reducedPreviewWidth);
         app.setResizeHeight(reducedPreviewHeight);
         app.setQuality(100);
-        long startTime = System.nanoTime();
         app.call();
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime)/1000000;
-        System.out.println("Reduce: " + duration);
 
         BufferedImage reducedPreview = ImageIO.read(new File(absolutePathOutput));
 
@@ -81,11 +86,7 @@ class ResizerAppTest {
         app.setResizeWidth(reducedPreviewWidth);
         app.setResizeHeight(reducedPreviewHeight);
         app.setQuality(100);
-        long startTime = System.nanoTime();
         app.call();
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime)/1000000;
-        System.out.println("Enlarge: " + duration);
 
 
         BufferedImage reducedPreview = ImageIO.read(new File(absolutePathOutput));
@@ -225,44 +226,69 @@ class ResizerAppTest {
 
     //    Custom tests
 
-
     @Test
-    public void testQuality() throws Exception {
-        URL res = getClass().getClassLoader().getResource(AUDIO_COVER_SOURCE_NAME);
+    public void testCrop() throws Exception {
+        URL res = getClass().getClassLoader().getResource(IMAGE_SOURCE_NAME);
         File file = Paths.get(res.toURI()).toFile();
         String absolutePathInput = file.getAbsolutePath();
 
-        String absolutePathOutput = absolutePathInput.replaceFirst(AUDIO_COVER_SOURCE_NAME, AUDIO_COVER_TARGET_NAME);
+        String absolutePathOutput = absolutePathInput.replaceFirst(IMAGE_SOURCE_NAME, IMAGE_TARGET_NAME);
 
         ResizerApp app = new ResizerApp();
         app.setInputFile(new File(absolutePathInput));
         app.setOutputFile(new File(absolutePathOutput));
-        app.setResizeWidth(AUDIO_COVER_WIDTH);
-        app.setResizeHeight(AUDIO_COVER_HEIGHT);
-        app.setQuality(50);
+//        app.setResizeWidth(IMAGE_WIDTH);
+//        app.setResizeHeight(IMAGE_HEIGHT);
+        app.setQuality(100);
+        app.setCropWidth(IMAGE_CROP_WIDTH);
+        app.setCropHeight(IMAGE_CROP_HEIGHT);
+        app.setCropX(60);
+        app.setCropY(32);
         app.call();
 
+        BufferedImage reducedPreview = ImageIO.read(new File(absolutePathOutput));
 
-        assertTrue(true);
+        assertEquals(IMAGE_CROP_WIDTH, reducedPreview.getWidth());
+        assertEquals(IMAGE_CROP_HEIGHT, reducedPreview.getHeight());
     }
 
-//    @Test
-//    public void testCrop() throws Exception {
-//        URL res = getClass().getClassLoader().getResource(AUDIO_COVER_SOURCE_NAME);
-//        File file = Paths.get(res.toURI()).toFile();
-//        String absolutePathInput = file.getAbsolutePath();
-//
-//        String absolutePathOutput = absolutePathInput.replaceFirst(AUDIO_COVER_SOURCE_NAME, AUDIO_COVER_TARGET_NAME);
-//
-//        ResizerApp app = new ResizerApp();
-//        app.setInputFile(new File(absolutePathInput));
-//        app.setOutputFile(new File(absolutePathOutput));
-//        app.setBlur(3);
-//        app.setQuality(50);
-//
-//        BufferedImage reducedPreview = ImageIO.read(new File(absolutePathOutput));
-//
-//        assertEquals("Please check params!", generatedException.getMessage());
-//        assertEquals(BadAttributesException.class, generatedException.getClass());
-//    }
+    @Test
+    public void testBlurAndDifferentExtension() throws Exception {
+        final int LOGO_BLUR_RADIUS = 5;
+
+        URL res = getClass().getClassLoader().getResource(LOGO_SOURCE_NAME);
+        File file = Paths.get(res.toURI()).toFile();
+        String absolutePathInput = file.getAbsolutePath();
+
+        String absolutePathOutput = absolutePathInput.replaceFirst(LOGO_SOURCE_NAME, LOGO_TARGET_NAME);
+
+        ResizerApp app = new ResizerApp();
+        app.setInputFile(new File(absolutePathInput));
+        app.setOutputFile(new File(absolutePathOutput));
+//        app.setResizeWidth(IMAGE_WIDTH);
+//        app.setResizeHeight(IMAGE_HEIGHT);
+        app.setQuality(100);
+        app.setBlurRadius(LOGO_BLUR_RADIUS);
+        app.call();
+    }
+
+
+    @Test
+    public void testMinimumQuality() throws Exception {
+        final int BOOK_COVER_QUALITY = 1;
+
+        URL res = getClass().getClassLoader().getResource(BOOK_COVER_SOURCE_NAME);
+        File file = Paths.get(res.toURI()).toFile();
+        String absolutePathInput = file.getAbsolutePath();
+
+        String absolutePathOutput = absolutePathInput.replaceFirst(BOOK_COVER_SOURCE_NAME, BOOK_COVER_TARGET_NAME);
+
+        ResizerApp app = new ResizerApp();
+        app.setInputFile(new File(absolutePathInput));
+        app.setOutputFile(new File(absolutePathOutput));
+        app.setResizeWidth(BOOK_COVER_WIDTH);
+        app.setResizeHeight(BOOK_COVER_HEIGHT);
+        app.setQuality(BOOK_COVER_QUALITY);
+        app.call();
+    }
 }

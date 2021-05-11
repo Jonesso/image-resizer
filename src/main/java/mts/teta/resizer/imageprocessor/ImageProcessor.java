@@ -44,14 +44,16 @@ public class ImageProcessor {
         }
 
         try {
-            BufferedImage imageToEdit = resizer.getOutputFile().exists() ?  ImageIO.read(resizer.getOutputFile()) : inputImage;
+            if (resizer.getResizeWidth() != 0 && resizer.getResizeHeight() != 0) {
+                BufferedImage imageToEdit = resizer.getOutputFile().exists() ? ImageIO.read(resizer.getOutputFile()) : inputImage;
 
-            Thumbnails.of(imageToEdit)
-                    .size(resizer.getResizeWidth(), resizer.getResizeHeight())
-                    .keepAspectRatio(false)
-                    .outputQuality(resizer.getQuality() / 100)
-                    .outputFormat(resizer.getOutputFormat().toLowerCase())
-                    .toFile(resizer.getOutputFile());
+                Thumbnails.of(imageToEdit)
+                        .size(resizer.getResizeWidth(), resizer.getResizeHeight())
+                        .keepAspectRatio(false)
+                        .outputQuality(resizer.getQuality() / 100)
+                        .outputFormat(resizer.getOutputFormat().toLowerCase())
+                        .toFile(resizer.getOutputFile());
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -60,7 +62,7 @@ public class ImageProcessor {
 
     private static void checkParams(ResizerApp resizer) throws BadAttributesException {
 
-        if (resizer.getResizeHeight() <= 0 || resizer.getResizeWidth() <= 0
+        if (resizer.getResizeHeight() < 0 || resizer.getResizeWidth() < 0
                 || resizer.getQuality() < 1 || resizer.getQuality() > 100
                 || resizer.getBlurRadius() < 0
                 || resizer.getOutputFormat() != null && !isProperFormat(resizer.getOutputFormat())
@@ -81,7 +83,7 @@ public class ImageProcessor {
     }
 
     private static boolean cropParamsPassed(ResizerApp resizer) {
-        return resizer.getCropHeight() != 0 && resizer.getCropWidth() != 0 && resizer.getCropX() != 0 && resizer.getCropY()!= 0;
+        return resizer.getCropHeight() != 0 && resizer.getCropWidth() != 0 && resizer.getCropX() != 0 && resizer.getCropY() != 0;
     }
 
 
